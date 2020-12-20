@@ -11,15 +11,15 @@ def pop3server():
 
 	# maximum timeout
 	if len(sys.argv) == 3:
-		max_time = int(sys.argv[2]) * 60
+		maxTime = int(sys.argv[2]) * 60
 	else:
-		max_time = 20 * 60
+		maxTime = 20 * 60
 
 	
-	pop3Server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	pop3Server = socket.socket()
 	pop3Server.bind((host, port))
 	pop3Server.listen(5)
-	print('Bersambung dengan port {}:{}'.format(host, port))
+	print('Bersambung dengan port {}: {}'.format(host, port))
 
 	# variables
 	user = "huda"
@@ -38,12 +38,11 @@ def pop3server():
 
 		client, address = pop3Server.accept()
 		print('Terima sambungan dari CLIENT {}:{}'.format(address[0], address[1]))
-		client.send('Hello Nurul Huda'.encode())
-
+		client.send('######################SELAMAT DATANG KE POP3 SERVER#######################\n\nHAI NURUL HUDA\n'.encode())
 		while True:
 
 			try:
-				client.settimeout(max_time)
+				client.settimeout(maxTime)
 				
 				reqClient = client.recv(1024).decode('utf8')
 				
@@ -55,7 +54,7 @@ def pop3server():
 							user_auth = True
 							client.send("+OK huda".encode())
 						else:
-							client.send("-ERR sorry no mailbox for {} here".format(reqClient).encode())
+							client.send("-ERR tiada mailbox untuk {} ".format(reqClient).encode())
 
 					# password
 					elif reqClient[0:4] == 'PASS':
@@ -94,14 +93,14 @@ def pop3server():
 							email.append(message)
 							lengthMessage += len(message)
 						deleteMessage = []
-						client.send("+OK maildrop ada has {} messages ({} character)".format(len(email), lengthMessage).encode())
+						client.send("+OK maildrop ada  {} mesej ({} octets)".format(len(email), lengthMessage).encode())
 
 					# quit
 					elif reqClient == "QUIT":
 						if lengthMessage == 0:
-							client.send("+OK {}\'s Keluar dari POP3 Server (tiada message)".format(user).encode())
+							client.send("+OK {}\'s Keluar dari POP3 Server (tiada mesej)".format(user).encode())
 						else:
-							client.send("+OK {}\'s Keluar dari POP3 Server ({} message)".format(user, len(email)).encode())
+							client.send("+OK {}\'s Keluar dari POP3 Server ({} mesej)".format(user, len(email)).encode())
 						break
 
 					# error command
