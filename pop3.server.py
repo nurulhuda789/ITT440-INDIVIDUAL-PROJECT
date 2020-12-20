@@ -22,17 +22,13 @@ def pop3server():
 	print('Bersambung dengan port {}: {}'.format(host, port))
 
 	# variables
-	user = "huda"
+	user = "hudasallehudin789@gmail.com"
 	password = "huda789" 
 	email = ["Hai Huda,\n Jom pergi bercuti ke Langkawi, \nAina", "Assalamualaikum, cik Huda. Anda dijemput hadir ke Majlis Hari Lahir Encik Mohd Amin pada tarikh 12 Julai 2021. Kehadiran cik amatlah dialu-alukan, \nSetiausaha ANEEQ SDN BHD", "Dear Huda, your order for phone case has arrived at Mylia Store"]
 	lengthMessage = 0
 	deleteMessage = []
 	for message in email:
 		lengthMessage += len(message)
-
-	
-	auth_stage = True
-	user_auth = False
 	
 	while True:
 
@@ -45,31 +41,22 @@ def pop3server():
 				client.settimeout(maxTime)
 				
 				reqClient = client.recv(1024).decode('utf8')
-				
-				if auth_stage:
 
-					# user
-					if reqClient[0:4] == 'USER':
-						if reqClient[5:] == user:
-							user_auth = True
-							client.send("+OK huda".encode())
-						else:
-							client.send("-ERR tiada mailbox untuk {} ".format(reqClient).encode())
-
-					# password
-					elif reqClient[0:4] == 'PASS':
-						if user_auth:
-							if reqClient[5:] == password:
-								auth_stage = False
-								client.send("+OK {} Berjaya log in".format(user).encode())
-							else:
-								client.send("-ERR salah kata laluan".encode())
-						else:
-							client.send("-ERR masukkan user lagi sekali".encode())
-
-					# error command
+				# user
+				if reqClient[0:4] == 'USER':
+					if reqClient[5:] == user:
+							
+						client.send("+OK {}".format(user).encode())
 					else:
-						client.send("-ERR salah command".encode())
+						client.send("-ERR salah user. Sila masukkan user yang betul. ".encode())
+
+				# password
+				elif reqClient[0:4] == 'PASS':
+					if reqClient[5:] == password:
+								
+						client.send("+OK {} Berjaya log in".format(user).encode())
+					else:
+						client.send("-ERR salah kata laluan".encode())
 
 				else:
 					#  status
@@ -116,7 +103,4 @@ def pop3server():
 		
 		client.close()
 		print("POP3 Server Close")
-		auth_stage = True
-		user_auth = False
-		deleted = []
 pop3server()
